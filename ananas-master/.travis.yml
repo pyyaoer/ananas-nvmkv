@@ -1,0 +1,8 @@
+language: c
+compiler:
+  - gcc
+script:
+  - autoreconf -i && ./configure && make
+
+notifications:
+  email: zhipengh512@gmail.com thunder.zhang@huawei.com
