@@ -26,7 +26,7 @@ AM_INIT_AUTOMAKE([1.9 dist-bzip2 dist-zip foreign subdir-objects -Wall -Werror])
 # Check for programs used in building Key Value Framework.
 AC_PROG_CC
 AC_LANG([C])
-AM_PROG_AR
+#AM_PROG_AR
 AC_PROG_LIBTOOL
 
 PYTHON=  # We *do not* allow the user to specify a python interpreter

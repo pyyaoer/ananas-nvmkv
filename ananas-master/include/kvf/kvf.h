@@ -67,7 +67,7 @@ typedef struct kvf_type
 	struct kvf_operations* kvf_ops; //the kvf operations
 	struct pool_operations* pool_ops; //the pool operations of the kvf
 
-	struct list kvf_list; 	//all the kvf instance are linked together
+	struct list kvf_node; 	//all the kvf instance are linked together
 	struct list pool_list; 	//all of pool instance of a kvf are linked together
 	void* kvf_private;
 } kvf_type_t;
