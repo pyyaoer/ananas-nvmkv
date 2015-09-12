@@ -1,0 +1,13 @@
+*.in
+*.m4
+*.log
+*.status
+*.[oa]
+ananas-master/Makefile
+ananas-master/autom4te.cache/
+ananas-master/build-aux/
+ananas-master/configure
+ananas-master/lib/
+ananas-master/libtool
+ananas-master/src/.deps/
+ananas-master/src/.dirstamp
