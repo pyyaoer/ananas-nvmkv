@@ -67,7 +67,7 @@ s32 kvf_unregister(kvf_type_t * kvf)
 {
 	KVF_CHECK_INVALID_PARAM_POINTER(kvf);
 
-	if (_kvf_find_impl(kvf->name) != NULL)
+	if (_kvf_find_impl(kvf->name) == NULL)
 	{
 		return KVF_NOT_EXISTED;
 	}
@@ -152,7 +152,7 @@ s32 kvf_init(kvf_type_t* kvf, const char* config_file)
 	KVF_CHECK_INVALID_PARAM_POINTER(kvf);
 	KVF_CHECK_INVALID_PARAM_POINTER(config_file);
 
-	return kvf->kvf_ops->init(config_file);
+	return kvf->kvf_ops->init(kvf, config_file);
 }
 
 /**
@@ -166,7 +166,7 @@ s32 kvf_init(kvf_type_t* kvf, const char* config_file)
 s32 kvf_shutdown(kvf_type_t* kvf)
 {
 	KVF_CHECK_INVALID_PARAM_POINTER(kvf);
-	return kvf->kvf_ops->shutdown();
+	return kvf->kvf_ops->shutdown(kvf);
 }
 
 /**
@@ -186,7 +186,7 @@ s32 kvf_set_prop(kvf_type_t* kvf, const char* name, char* value)
 	KVF_CHECK_INVALID_PARAM_POINTER(value);
 	//TODO: check the value length?
 
-	return kvf->kvf_ops->set_prop(name, value);
+	return kvf->kvf_ops->set_prop(kvf, name, value);
 }
 
 /**
@@ -206,7 +206,7 @@ s32 kvf_get_prop(kvf_type_t* kvf, const char* name, char* value)
 	KVF_CHECK_NAME(name);
 
 	//TODO: check the value length?
-	return kvf->kvf_ops->get_prop(name, value);
+	return kvf->kvf_ops->get_prop(kvf, name, value);
 }
 
 /** /brief
@@ -272,7 +272,7 @@ s32 kvf_get_stats(kvf_type_t* kvf, kvf_stats_t* stats)
 {
 	KVF_CHECK_INVALID_PARAM_POINTER(kvf);
 	KVF_CHECK_INVALID_PARAM_POINTER(stats);
-	return kvf->kvf_ops->get_stats(stats);
+	return kvf->kvf_ops->get_stats(kvf, stats);
 }
 
 /**

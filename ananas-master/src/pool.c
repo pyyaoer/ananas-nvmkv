@@ -37,6 +37,7 @@ s32 pool_create(kvf_type_t* kvf, const char* name, const char* config_path, pool
 	//2) add the pool to kvf
 	if (RET_OK == ret)
 	{
+		pool->kvf = kvf;
 		list_add(&pool->link, &kvf->pool_list);
 	}
 

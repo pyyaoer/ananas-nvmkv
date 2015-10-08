@@ -62,6 +62,7 @@ typedef struct kvf_type
 {
 	s32 magic; 	//magic of the kvf
 	s32 flags; 	//flags
+	s32 kvfid;	//kvfid
 	char* name; //the name should be unique
 
 	struct kvf_operations* kvf_ops; //the kvf operations
@@ -139,14 +140,14 @@ typedef struct kvf_trans_id {
  \note
  */
 typedef struct kvf_operations {
-	s32 (*init)(const char* config_file);
-	s32 (*shutdown)();
-	s32 (*set_prop)(const char* name, char* value);
-	s32 (*get_prop)(const char* name, char* value);
+	s32 (*init)(kvf_type_t* kvf, const char* config_file);
+	s32 (*shutdown)(kvf_type_t* kvf);
+	s32 (*set_prop)(kvf_type_t* kvf, const char* name, char* value);
+	s32 (*get_prop)(kvf_type_t* kvf, const char* name, char* value);
 	void* (*alloc_buf)(u32 size, s32 flag);
 	void (*free_buf)(void** buf);
 	const char* (*get_errstr)(s32 errcode);
-	s32 (*get_stats)(kvf_stats_t * kvfstats);
+	s32 (*get_stats)(kvf_type_t* kvf, kvf_stats_t * kvfstats);
 	s32 (*trans_start)(kv_trans_id_t** t_id);
 	s32 (*trans_commit)(kv_trans_id_t* t_id);
 	s32 (*trans_abort)(kv_trans_id_t* t_id);
