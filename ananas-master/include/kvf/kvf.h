@@ -63,6 +63,7 @@ typedef struct kvf_type
 	s32 magic; 	//magic of the kvf
 	s32 flags; 	//flags
 	s32 kvfid;	//kvfid
+	s32 devfd;	//device file descriptor
 	char* name; //the name should be unique
 
 	struct kvf_operations* kvf_ops; //the kvf operations
@@ -459,7 +460,10 @@ typedef struct kv_iter {
 /***** APIs *****/
 s32 kvf_register(kvf_type_t * t);
 s32 kvf_unregister(kvf_type_t * t);
-//kvf_type_t* get_kvf(const char* name);
+kvf_type_t* get_kvf(const char* name);
+void kvf_load(const char* config_file);
+void kvf_unload();
+
 
 #ifdef __cplusplus
 }

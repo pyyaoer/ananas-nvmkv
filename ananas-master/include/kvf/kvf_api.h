@@ -30,7 +30,8 @@ extern "C"{
  	 	 get a kvf instance
     \note
  */
-s32 get_kvf(const char* name, kvf_type_t* type);
+//s32 get_kvf(const char* name, kvf_type_t* type);
+kvf_type_t* get_kvf(const char* name);
 
 /** \brief
  	 	 init a kvf instance
