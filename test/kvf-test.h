@@ -1,5 +1,6 @@
 #include "stdio.h"
 #include "kvf.h"
+#include "nvm_kv.h"
 
 s32 nvmkv_pool_create(const char* name, const char* config_path, pool_t* pool){
         return 0;
