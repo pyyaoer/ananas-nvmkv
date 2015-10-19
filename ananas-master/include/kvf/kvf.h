@@ -459,7 +459,7 @@ typedef struct kv_iter {
 /***** APIs *****/
 s32 kvf_register(kvf_type_t * t);
 s32 kvf_unregister(kvf_type_t * t);
-kvf_type_t* get_kvf(const char* name);
+//kvf_type_t* get_kvf(const char* name);
 
 #ifdef __cplusplus
 }
