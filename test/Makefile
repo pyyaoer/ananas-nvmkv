@@ -1,9 +1,25 @@
-LDFLAGS= -I/path/to/ananas/include/kvf -L/path/to/ananas/lib/.libs -lkvf
+PATH_TO_ANANAS= /home/xiaoyang/Documents/ananas-nvmkv/test-ananas
+
+PATH_TO_ANANAS_INC= $(PATH_TO_ANANAS)/include/kvf
+PATH_TO_ANANAS_LIB= $(PATH_TO_ANANAS)/lib/.libs
+PATH_TO_NVMKV_INC=/usr/include/nvm
+PATH_TO_NVMKV_LIB=/usr/lib/nvm
+PATH_TO_VSL_LIB=/usr/lib/fio
+
+LDFLAGS= -I$(PATH_TO_ANANAS_INC) -I$(PATH_TO_NVMKV_INC) -L$(PATH_TO_ANANAS_LIB) -L$(PATH_TO_NVMKV_LIB) -L$(PATH_TO_VSL_LIB)
+
+LDLIBS= -lkvf -lnvmkv -lvsl -lnvm-primitives -ldl -lpthread
+
+CPPFLAGS=-std=gnu99
 
 all: kvf-test
-	LD_LIBRARY_PATH=/path/to/ananas/lib/.libs ./kvf-test
+	sudo LD_LIBRARY_PATH=$(PATH_TO_ANANAS_LIB):$(PATH_TO_NVMKV_LIB) ./kvf-test
 
-kvf-test: kvf-test.h
+kvf-test: kvf-test.o
+	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+
+kvf-test.o: kvf-test.c kvf-test.h
+	$(CC) -c $< $(LDFLAGS)
 
 clean:
 	rm -f *.o kvf-test
