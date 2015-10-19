@@ -1,4 +1,13 @@
-PATH_TO_ANANAS= /home/xiaoyang/Documents/ananas-nvmkv/test-ananas
+#Assuming that libnvm-primitives.so and libnvmkv.so are in /usr/lib/nvm
+#Assuming that libvsl.so is in /usr/lib/fio
+#Assuming that public header files are in /usr/include/nvm
+#Assuming that device is /dev/fioa
+
+#Assuming that the root repository of kvf is /path/to/ananas
+#If you have not yet run "make install", change it to your own path
+#Otherwise, just justify PATH_TO_ANANAS_INC and PATH_TO_ANANAS_LIB
+
+PATH_TO_ANANAS= /path/to/ananas
 
 PATH_TO_ANANAS_INC= $(PATH_TO_ANANAS)/include/kvf
 PATH_TO_ANANAS_LIB= $(PATH_TO_ANANAS)/lib/.libs
