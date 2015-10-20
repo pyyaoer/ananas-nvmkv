@@ -21,14 +21,17 @@ LDLIBS= -lkvf -lnvmkv -lvsl -lnvm-primitives -ldl -lpthread
 
 CPPFLAGS=-std=gnu99
 
-all: kvf-test
-	sudo LD_LIBRARY_PATH=$(PATH_TO_ANANAS_LIB):$(PATH_TO_NVMKV_LIB) ./kvf-test
+all: test
+	sudo LD_LIBRARY_PATH=$(PATH_TO_ANANAS_LIB):$(PATH_TO_NVMKV_LIB) ./test
 
-kvf-test: kvf-test.o
-	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+test: test.o kvf-test.o
+	$(CC) -o $@ $^ $(LDLIBS) $(LDFLAGS)
+
+test.o: test.c kvf-test.h
+	$(CC) -c $< $(LDFLAGS)
 
 kvf-test.o: kvf-test.c kvf-test.h
 	$(CC) -c $< $(LDFLAGS)
 
 clean:
-	rm -f *.o kvf-test
+	rm -f *.o test
