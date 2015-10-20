@@ -34,7 +34,7 @@ s32 nvmkv_pool_destroy(pool_t* pool){
                         return -1;
                 }
                 if (pool_info.pool_status == POOL_NOT_IN_USE){
-                        printf("pool deleted completely pool status = %d\n", pool_info.pool_status);
+                        printf("kvf pool %s deleted completely!\n", pool->pool_name);
                         break;
                 }
         }
@@ -85,6 +85,43 @@ s32 nvmkv_kvlib_shutdown(kvf_type_t* kvf){
         return RET_OK;
 }
 
+s32 nvmkv_kv_put(pool_t* pool, const string_t* key, const string_t* value, const kv_props_t* props, const put_options_t* putopts){
+	int	ret = -1;
+	kvf_type_t* kvf = pool->kvf;
+
+	ret = nvm_kv_put(kvf->kvfid, pool->pool_id, (nvm_kv_key_t *) key->data, key->len, value->data, value->len, 0, true, 0);
+	if (ret < 0){
+		printf("nvm_kv_put: failed, errno = %d\n", errno);
+		return -1;
+	}
+	printf("kvf put kv into pool %s!\n\tkey:\t%s\n\tvalue:\t%s\n", pool->pool_name, key->data, value->data);
+}
+
+s32 nvmkv_kv_get(pool_t* pool, const string_t* key, string_t* value, const kv_props_t* props, const get_options_t* getopts){
+        int     		ret = -1;
+        kvf_type_t* 		kvf = pool->kvf;
+	nvm_kv_key_info_t	key_info;
+
+        ret = nvm_kv_get(kvf->kvfid, pool->pool_id, (nvm_kv_key_t *) key->data, key->len, value->data, value->len, true, &key_info);
+        if (ret < 0){
+                printf("nvm_kv_get: failed, errno = %d\n", errno);
+                return -1;
+        }
+        printf("kvf get kv from pool %s!\n\tkey:\t%s\n\tvalue:\t%s\n", pool->pool_name, key->data, value->data);
+}
+
+s32 nvmkv_kv_del(pool_t* pool, const string_t* key, const kv_props_t* props, const del_options_t* delopts){
+        int     ret = -1;
+        kvf_type_t* kvf = pool->kvf;
+
+        ret = nvm_kv_delete(kvf->kvfid, pool->pool_id, (nvm_kv_key_t *) key->data, key->len);
+        if (ret < 0){
+                printf("nvm_kv_del: failed, errno = %d\n", errno);
+                return -1;
+        }
+        printf("kvf del kv from pool %s!\n\tkey:\t%s\n", pool->pool_name, key->data);
+}
+
 pool_operations_t nvmkv_pool_ops = {
         .create = nvmkv_pool_create,
         .destroy = nvmkv_pool_destroy,
@@ -109,13 +146,31 @@ kvf_operations_t nvmkv_kvlib_ops = {
         .trans_abort = NULL
 };
 
-kvf_type_t nvmkv_kv_lib = {
-        .magic = 0,
-        .flags = 0,
-        .kvfid = 0,
-        .devfd = 0,
+kv_operations_t nvmkv_kv_ops = {
+	.put = nvmkv_kv_put,
+	.get = nvmkv_kv_get,
+	.del = nvmkv_kv_del,
+	.mput = NULL,
+	.mget = NULL,
+	.mdel = NULL,
+	.async_put = NULL,
+	.async_update = NULL,
+	.async_get = NULL,
+	.async_del = NULL,
+	.iter_open = NULL,
+	.iter_next = NULL,
+	.iter_close = NULL,
+	.iter_pos_deserialize = NULL,
+	.iter_pos_serialize = NULL,
+	.xcopy = NULL
+}; 
+
+kvf_type_t nvmkv_kvlib_std = {
         .name = "nvm_kvlib",
         .kvf_ops = &nvmkv_kvlib_ops,
         .pool_ops = &nvmkv_pool_ops
 };
 
+pool_t nvmkv_pool_std = {
+	.kv_ops = &nvmkv_kv_ops
+};
