@@ -152,6 +152,7 @@ s32 kvf_init(kvf_type_t* kvf, const char* config_file)
 	KVF_CHECK_INVALID_PARAM_POINTER(kvf);
 	KVF_CHECK_INVALID_PARAM_POINTER(config_file);
 
+	INIT_LIST_HEAD(&(kvf->pool_list));
 	return kvf->kvf_ops->init(kvf, config_file);
 }
 

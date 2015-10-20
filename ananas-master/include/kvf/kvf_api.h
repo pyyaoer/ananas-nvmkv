@@ -79,7 +79,7 @@ char* kvf_get_errstr(kvf_type_t* type, s32 errcode);
  	 	 get the statistics
     \note
  */
-s32 kvf_get_stats(kvf_type_t* type, kvf_stats_t* kvf_stats_t);
+s32 kvf_get_stats(kvf_type_t* type, kvf_stats_t* stats);
 
 /** \brief
  	 	 start a transaction
@@ -103,7 +103,7 @@ s32 kvf_trans_abort(kv_trans_id_t* t_id);
  	 	 create a pool
     \note
  */
-s32 pool_create(const char* name, const char* config_path, pool_t * p);
+s32 pool_create(kvf_type_t* kvf, const char* name, const char* config_path, pool_t * p);
 
 /** \brief
  	 	 destroy a pool
@@ -139,7 +139,7 @@ s32 pool_get_prop(const pool_t* p, const char* name, char** value);
  	 	 get the statistics of a pool
     \note
  */
-s32 pool_get_stats(pool_stats_t* stats);
+s32 pool_get_stats(const pool_t* p, pool_stats_t* stats);
 
 /** \brief
  	 	 put a key-value

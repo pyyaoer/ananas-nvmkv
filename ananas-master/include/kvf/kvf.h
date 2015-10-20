@@ -240,6 +240,11 @@ typedef struct pool {
 	kvf_type_t* kvf;
 
 	/*
+	 * kvf pool id\
+	 */
+	s32 pool_id;
+
+	/*
 	 *the location info
 	 */
 	pool_location_t* pool_location;

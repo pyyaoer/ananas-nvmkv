@@ -134,12 +134,12 @@ s32 mdel(pool_t* p, const kv_array_t* kvarray, const kv_props_t* props, const de
 
     /note
  */
-s32 open_iter(pool_t* p, const pool_t* pool,const string_t* key_regex, u32 limit, u32 timeout, kv_iter_t* it)
+s32 open_iter(const pool_t* pool,const string_t* key_regex, u32 limit, u32 timeout, kv_iter_t* it)
 {
 	KVF_CHECK_INVALID_PARAM_POINTER(pool);
 	KVF_CHECK_INVALID_PARAM_POINTER(key_regex);
 
-	return p->kv_ops->iter_open(p, key_regex, limit, timeout, it);
+	return pool->kv_ops->iter_open(pool, key_regex, limit, timeout, it);
 }
 
 /**
