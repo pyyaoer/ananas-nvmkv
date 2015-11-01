@@ -103,6 +103,26 @@ s32 nvmkv_kvlib_shutdown(kvf_type_t* kvf){
         return RET_OK;
 }
 
+s32 nvmkv_kvlib_getstats(kvf_type_t* kvf, kvf_stats_t* kvfstats){
+	int			ret = -1;
+	int			kvfid = kvf->kvfid;
+	nvm_kv_store_info_t	store_info;
+
+	memset(kvfstats, 0, sizeof(kvf_stats_t));
+	ret = nvm_kv_get_store_info(kvfid, &store_info);
+	if (ret < 0){
+		printf("nvm_kv_get_store_info: failed, errno = %d\n", errno);
+		return -1;
+	}
+	kvfstats->refcnt = 0;
+	kvfstats->errs = 0;
+	kvfstats->buftotal = -1;
+	kvfstats->bufallocated = -1;
+	kvfstats->bufffree = store_info.free_space;
+
+	return RET_OK;
+}
+
 s32 nvmkv_kv_put(pool_t* pool, const string_t* key, const string_t* value, const kv_props_t* props, const put_options_t* putopts){
 	int	ret = -1;
 	kvf_type_t* kvf = pool->kvf;
@@ -158,7 +178,7 @@ kvf_operations_t nvmkv_kvlib_ops = {
         .alloc_buf = NULL,
         .free_buf = NULL,
         .get_errstr = NULL,
-        .get_stats = NULL,
+        .get_stats = nvmkv_kvlib_getstats,
         .trans_start = NULL,
         .trans_commit = NULL,
         .trans_abort = NULL

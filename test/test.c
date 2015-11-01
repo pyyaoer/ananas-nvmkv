@@ -29,12 +29,21 @@ void del_str(string_t* s_str){
 	free(s_str);
 }
 
+void print_kvf_stats(kvf_stats_t* kvf_stats){
+	printf("refcnt: %d\n", kvf_stats->refcnt);
+	printf("errs: %d\n", kvf_stats->errs);
+	printf("buftotal: %lld\n", kvf_stats->buftotal);
+	printf("bufallocated: %lld\n", kvf_stats->bufallocated);
+	printf("bufffree: %lld\n", kvf_stats->bufffree);
+}
+
 int main(){
 
 	kvf_type_t*	kvf = malloc(sizeof(kvf_type_t));
 	pool_t*		pool_fst = malloc(sizeof(pool_t));
 	pool_t*		pool_sec = malloc(sizeof(pool_t));
 	kv_props_t*	props = malloc(sizeof(kv_props_t));
+	kvf_stats_t*	kvf_stats = malloc(sizeof(kvf_stats_t));
 
 	string_t*	key_fst = gen_str("key_1st", MAX_KEY_LEN);
 	string_t*	val_fst = gen_str("val_1st", MAX_VAL_LEN);
@@ -61,6 +70,8 @@ int main(){
 	 * shutdown kvf
 	 */
 	kvf_init(kvf, "");
+	kvf_get_stats(kvf, kvf_stats);
+	print_kvf_stats(kvf_stats);
 	pool_create(kvf, "fst_pool", "", pool_fst);
         pool_create(kvf, "sec_pool", "", pool_sec);
 	put(pool_fst, key_fst, val_fst, props, NULL);
@@ -79,6 +90,8 @@ int main(){
 	 * shutdown kvf
 	*/
 	kvf_init(kvf, "");
+	kvf_get_stats(kvf, kvf_stats);
+	print_kvf_stats(kvf_stats);
 	pool_open(pool_fst);
 	pool_open(pool_sec);
         get(pool_fst, key_fst, val_emp, props, NULL);
@@ -106,6 +119,7 @@ test_exit:
 	free(pool_fst);
 	free(pool_sec);
 	free(props);
+	free(kvf_stats);
 
 	return 0;
 }
