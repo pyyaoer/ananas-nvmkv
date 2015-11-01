@@ -46,25 +46,53 @@ int main(){
 	memcpy(pool_fst, &nvmkv_pool_std, sizeof(pool_t));
 	memcpy(pool_sec, &nvmkv_pool_std, sizeof(pool_t));
 
+	printf("\n\n");
+	/* load & register
+	 */
 	kvf_load("");
 	kvf_register(kvf);
-	kvf_init(kvf, "");
 
+
+	printf("\n\n");
+	/* open kvf
+	 * create pools
+	 * put kv pairs
+	 * close pools
+	 * shutdown kvf
+	 */
+	kvf_init(kvf, "");
 	pool_create(kvf, "fst_pool", "", pool_fst);
         pool_create(kvf, "sec_pool", "", pool_sec);
-
 	put(pool_fst, key_fst, val_fst, props, NULL);
 	put(pool_fst, key_sec, val_sec, props, NULL);
-	get(pool_fst, key_fst, val_emp, props, NULL);
-	get(pool_fst, key_sec, val_emp, props, NULL);
-	del(pool_fst, key_fst, props, NULL);
-	del(pool_fst, key_sec, props, NULL);
-
-
-        pool_destroy(pool_fst);
-	pool_destroy(pool_sec);
-
+	pool_close(pool_fst);
+	pool_close(pool_sec);
 	kvf_shutdown(kvf);
+
+
+	printf("\n\n");
+	/* reopen kvf
+	 * open pools
+	 * get kv pairs
+	 * del kv pairs
+	 * destroy pools
+	 * shutdown kvf
+	*/
+	kvf_init(kvf, "");
+	pool_open(pool_fst);
+	pool_open(pool_sec);
+        get(pool_fst, key_fst, val_emp, props, NULL);
+        get(pool_fst, key_sec, val_emp, props, NULL);
+        del(pool_fst, key_fst, props, NULL);
+        del(pool_fst, key_sec, props, NULL);
+	pool_destroy(pool_fst);
+	pool_destroy(pool_sec);
+	kvf_shutdown(kvf);
+
+
+	printf("\n\n");
+	/* unregister & unload
+	 */
 	kvf_unregister(kvf);
 	kvf_unload();
 

@@ -42,6 +42,24 @@ s32 nvmkv_pool_destroy(pool_t* pool){
         return RET_OK;
 }
 
+s32 nvmkv_pool_open(pool_t* pool){
+	int             pool_id = -1;
+	kvf_type_t*     kvf = pool->kvf;
+
+	pool_id = nvm_kv_pool_create(kvf->kvfid, (nvm_kv_pool_tag_t *)(pool->pool_name));
+	if (pool_id < 0){
+		printf("nvm_kv_pool_create: failed, errno = %d\n", errno);
+	return -1;
+	}
+	pool->pool_id = pool_id;
+	printf("kvf pool %s opened! pool_id = %d\n", pool->pool_name, pool_id);
+	return RET_OK;
+}
+
+s32 nvmkv_pool_close(pool_t* pool){
+	return RET_OK;
+}
+
 s32 nvmkv_kvlib_init(kvf_type_t* kvf, const char* config_file){
         int     fd = -1;
         int     kvfid = -1;
@@ -125,8 +143,8 @@ s32 nvmkv_kv_del(pool_t* pool, const string_t* key, const kv_props_t* props, con
 pool_operations_t nvmkv_pool_ops = {
         .create = nvmkv_pool_create,
         .destroy = nvmkv_pool_destroy,
-        .open = NULL,
-        .close = NULL,
+        .open = nvmkv_pool_open,
+        .close = nvmkv_pool_close,
         .set_prop = NULL,
         .get_prop = NULL,
         .get_stats = NULL
