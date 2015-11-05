@@ -20,6 +20,7 @@
  */
 s32 put(pool_t* p, const string_t* key, const string_t* value, const kv_props_t* props, const put_options_t* putopts)
 {
+	KVF_CHECK_INVALID_PARAM_POINTER(p);
 	KVF_CHECK_INVALID_PARAM_POINTER(key);
 	KVF_CHECK_INVALID_PARAM_POINTER(value);
 	KVF_CHECK_INVALID_PARAM_POINTER(props);
@@ -40,6 +41,7 @@ s32 put(pool_t* p, const string_t* key, const string_t* value, const kv_props_t*
  */
 s32 get(pool_t* p, const string_t* key, string_t* value, const kv_props_t* props, const get_options_t* getopts)
 {
+	KVF_CHECK_INVALID_PARAM_POINTER(p);
 	KVF_CHECK_INVALID_PARAM_POINTER(key);
 	KVF_CHECK_INVALID_PARAM_POINTER(value);
 	KVF_CHECK_INVALID_PARAM_POINTER(props);
@@ -60,6 +62,7 @@ s32 get(pool_t* p, const string_t* key, string_t* value, const kv_props_t* props
  */
 s32 del(pool_t* p, const string_t* key, const kv_props_t* props, const del_options_t* delopts)
 {
+	KVF_CHECK_INVALID_PARAM_POINTER(p);
 	KVF_CHECK_INVALID_PARAM_POINTER(key);
 	KVF_CHECK_INVALID_PARAM_POINTER(props);
 
@@ -79,6 +82,7 @@ s32 del(pool_t* p, const string_t* key, const kv_props_t* props, const del_optio
  */
 s32 mput(pool_t* p, const kv_array_t* kvarray, const kv_props_t* props, const put_options_t* putopts)
 {
+	KVF_CHECK_INVALID_PARAM_POINTER(p);
 	KVF_CHECK_INVALID_PARAM_POINTER(kvarray);
 	KVF_CHECK_INVALID_PARAM_POINTER(props);
 
@@ -99,6 +103,7 @@ s32 mput(pool_t* p, const kv_array_t* kvarray, const kv_props_t* props, const pu
  */
 s32 mget(pool_t* p, kv_array_t* kvarray, const kv_props_t* props, const get_options_t* getopts)
 {
+	KVF_CHECK_INVALID_PARAM_POINTER(p);
 	KVF_CHECK_INVALID_PARAM_POINTER(kvarray);
 	KVF_CHECK_INVALID_PARAM_POINTER(props);
 
@@ -117,6 +122,7 @@ s32 mget(pool_t* p, kv_array_t* kvarray, const kv_props_t* props, const get_opti
  */
 s32 mdel(pool_t* p, const kv_array_t* kvarray, const kv_props_t* props, const del_options_t* delopts)
 {
+	KVF_CHECK_INVALID_PARAM_POINTER(p);
 	KVF_CHECK_INVALID_PARAM_POINTER(kvarray);
 	KVF_CHECK_INVALID_PARAM_POINTER(props);
 
@@ -138,6 +144,7 @@ s32 open_iter(const pool_t* pool,const string_t* key_regex, u32 limit, u32 timeo
 {
 	KVF_CHECK_INVALID_PARAM_POINTER(pool);
 	KVF_CHECK_INVALID_PARAM_POINTER(key_regex);
+	KVF_CHECK_INVALID_PARAM_POINTER(it);
 
 	return pool->kv_ops->iter_open(pool, key_regex, limit, timeout, it);
 }
@@ -154,6 +161,7 @@ s32 open_iter(const pool_t* pool,const string_t* key_regex, u32 limit, u32 timeo
  */
 s32 next_iter(pool_t* p, kv_iter_t* it, kv_array_t* kvarray)
 {
+	KVF_CHECK_INVALID_PARAM_POINTER(p);
 	KVF_CHECK_INVALID_PARAM_POINTER(it);
 	KVF_CHECK_INVALID_PARAM_POINTER(kvarray);
 
@@ -169,6 +177,7 @@ s32 next_iter(pool_t* p, kv_iter_t* it, kv_array_t* kvarray)
  */
 s32 close_iter(pool_t* p, kv_iter_t* it)
 {
+	KVF_CHECK_INVALID_PARAM_POINTER(p);
 	KVF_CHECK_INVALID_PARAM_POINTER(it);
 
 	return p->kv_ops->iter_close(p, it);
