@@ -12,4 +12,4 @@ lex.yy.c: test.l
 	$(LEX) test.l
 
 clean:
-	rm -f test.tab.* lex.yy.c test
+	rm -f test.tab.* test.output lex.yy.c test

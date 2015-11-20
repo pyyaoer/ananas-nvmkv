@@ -7,15 +7,16 @@ extern YYSTYPE yylval;
 
 char [^ \"\t\n]
 num [0-9]
+empty [ \t]
+tail {empty}*=
 
 %%
 
 #([^\n]*)$ /* comment */ {return COMMENT;}
-[ \t] /* ignore whitespace */
-[Dd][Ee][Vv] /* device name*/{return DEV;}
-[Pp][Nn][Uu][Mm] /* pool num*/ {return PNUM;}
-[Cc][Ss][Ii][Zz][Ee] /* cache size*/ {return CSIZE;}
-= /* equal to */ {return EQUAL;}
+{empty} /* ignore whitespace */
+[Dd][Ee][Vv]{tail} /* device name*/{return DEV;}
+[Pp][Nn][Uu][Mm]{tail} /* pool num*/ {return PNUM;}
+[Cc][Ss][Ii][Zz][Ee]{tail} /* cache size*/ {return CSIZE;}
 {num}+ /* integer */ {yylval = strdup(yytext); return INTEGER;}
 \"{char}+\" /* common string */ {yylval = strdup(yytext); return STRING;}
 

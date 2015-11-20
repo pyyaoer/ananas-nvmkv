@@ -7,20 +7,19 @@ extern FILE* yyin;
 typedef char* str;
 #define YYSTYPE str
 %}
-%token COMMENT DEV PNUM CSIZE EQUAL INTEGER STRING
+%token COMMENT DEV PNUM CSIZE INTEGER STRING
 
 %%
 
 parser:
-parser sentence
-| sentence
+sentence parser
 |
 ;
 sentence:
 COMMENT
-| DEV EQUAL STRING {printf("Device: %s\n", $3);}
-| PNUM EQUAL INTEGER {printf("Pool Num: %d\n", atoi($3));}
-| CSIZE EQUAL INTEGER {printf("Cache Size: %d\n", atoi($3));}
+| DEV STRING {printf("Device: %s\n", $2);}
+| PNUM INTEGER {printf("Pool Num: %d\n", atoi($2));}
+| CSIZE INTEGER {printf("Cache Size: %d\n", atoi($2));}
 ;
 
 %%
