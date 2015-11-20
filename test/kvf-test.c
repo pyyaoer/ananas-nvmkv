@@ -5,6 +5,11 @@ s32 nvmkv_pool_create(const char* name, const char* config_path, pool_t* pool){
         int             pool_id = -1;
         kvf_type_t*     kvf = pool->kvf;
 
+	if (strlen(name) > NVMKV_KVF_MAX_POOL_NAME_LEN){
+		printf("Pool name %s too long!\n", name);
+		return -1;
+	}
+
         pool_id = nvm_kv_pool_create(kvf->kvfid, (nvm_kv_pool_tag_t *)name);
         if (pool_id < 0){
                 printf("nvm_kv_pool_create: failed, errno = %d\n", errno);
@@ -43,16 +48,6 @@ s32 nvmkv_pool_destroy(pool_t* pool){
 }
 
 s32 nvmkv_pool_open(pool_t* pool){
-	int             pool_id = -1;
-	kvf_type_t*     kvf = pool->kvf;
-
-	pool_id = nvm_kv_pool_create(kvf->kvfid, (nvm_kv_pool_tag_t *)(pool->pool_name));
-	if (pool_id < 0){
-		printf("nvm_kv_pool_create: failed, errno = %d\n", errno);
-	return -1;
-	}
-	pool->pool_id = pool_id;
-	printf("kvf pool %s opened! pool_id = %d\n", pool->pool_name, pool_id);
 	return RET_OK;
 }
 
@@ -61,12 +56,12 @@ s32 nvmkv_pool_close(pool_t* pool){
 }
 
 s32 nvmkv_kvlib_init(kvf_type_t* kvf, const char* config_file){
-        int     fd = -1;
-        int     kvfid = -1;
-        int     cache_size = 4096;
-        char    device_name[MAX_DEV_NAME_SIZE];
+	int     fd = -1;
+	int     kvfid = -1;
+	int     cache_size = 4096;
+	char    device_name[NVMKV_KVF_MAX_DEV_NAME_LEN];
 
-        strncpy(device_name, "/dev/fioa", MAX_DEV_NAME_SIZE);
+        strncpy(device_name, "/dev/fioa", NVMKV_KVF_MAX_DEV_NAME_LEN);
         fd = open(device_name, O_RDWR);
         if (fd < 0){
                 printf("Cannot open file %s, errno: %d\n", device_name, errno);
@@ -160,6 +155,93 @@ s32 nvmkv_kv_del(pool_t* pool, const string_t* key, const kv_props_t* props, con
         printf("kvf del kv from pool %s!\n\tkey:\t%s\n", pool->pool_name, key->data);
 }
 
+s32 nvmkv_kvit_open(const pool_t* pool, const string_t* key_regex, s32 limit, s32 timeout, kv_iter_t* it){
+	int 		ret = -1;
+	kvf_type_t*	kvf = pool->kvf;
+
+	if (limit <= 0){
+		printf("limit should be positive!\n");
+		return -1;
+	}
+	
+	ret = nvm_kv_begin(kvf->kvfid, pool->pool_id);
+	if (ret < 0){
+		printf("nvm_kv_begin: failed, errno = %d\n", errno);
+		return -1;
+	}
+	printf("kvf iter in pool %s! iter id:%d\n", pool->pool_name, ret);
+	it->id = ret;
+	it->limit = limit;
+	it->timeout = timeout;
+	return RET_OK;
+}
+
+s32 nvmkv_kvit_next(pool_t* pool, struct kv_iter* it, kv_array_t* kvarray){
+	int			i = 0;
+	int			ret = -1;
+	kvf_type_t*     	kvf = pool->kvf;
+	string_t*		kv_key;
+	string_t*		kv_value;
+	nvm_kv_key_info_t	key_info;
+
+	if (kvarray->kv_elements != NULL){
+		if (kvarray->kv_num > 0){
+			for(i = 0; i < kvarray->kv_num; i++){
+				free(kvarray->kv_elements[i].kv_key.data);
+				free(kvarray->kv_elements[i].kv_value.data);
+			}
+		}
+		free(kvarray->kv_elements);
+		kvarray->kv_elements = NULL;
+	}
+	kvarray->kv_num = 0;
+	kvarray->kv_elements = malloc(it->limit * sizeof(kv_t));
+
+	for(i = 0; i < it->limit; i++){
+		// set key info
+		kv_key = &(kvarray->kv_elements[i].kv_key);
+		kv_key->len = NVMKV_KVF_MAX_KEY_LEN;
+		kv_key->data = malloc(NVMKV_KVF_MAX_KEY_LEN);
+
+		// set value info
+		kv_value = &(kvarray->kv_elements[i].kv_value);
+		kv_value->len = NVMKV_KVF_MAX_VAL_LEN;
+		kv_value->data = malloc(NVMKV_KVF_MAX_VAL_LEN);
+
+		// get the current kv
+		ret = nvm_kv_get_current(kvf->kvfid, it->id, (nvm_kv_key_t *)kv_key->data, &kv_key->len, kv_value->data, kv_value->len, &key_info);
+		if (ret < 0){
+			printf("nvm_kv_get_current: failed, errno = %d\n", errno);
+			break;
+		}
+		kv_key->len = key_info.key_len;
+		kv_value->len = key_info.value_len;
+		kvarray->kv_num ++;
+
+		// get the next kv
+		ret = nvm_kv_next(kvf->kvfid, it->id);
+		if (ret != 0){
+			if (errno != -NVM_ERR_OBJECT_NOT_FOUND){
+				printf("nvm_kv_next: failed, errno = %d\n", errno);
+			}
+			break;
+		}
+	}
+	return RET_OK;
+}
+
+s32 nvmkv_kvit_close(pool_t* p, struct kv_iter* it){
+	int		ret = -1;
+	kvf_type_t*	kvf = p->kvf;
+
+	ret = nvm_kv_iteration_end(kvf->kvfid, it->id);
+	if (ret < 0){
+		printf("nvm_kv_iteration_end: failed, errno = %d\n", errno);
+		return -1;
+	}
+	return RET_OK;
+}
+
 pool_operations_t nvmkv_pool_ops = {
         .create = nvmkv_pool_create,
         .destroy = nvmkv_pool_destroy,
@@ -195,9 +277,9 @@ kv_operations_t nvmkv_kv_ops = {
 	.async_update = NULL,
 	.async_get = NULL,
 	.async_del = NULL,
-	.iter_open = NULL,
-	.iter_next = NULL,
-	.iter_close = NULL,
+	.iter_open = nvmkv_kvit_open,
+	.iter_next = nvmkv_kvit_next,
+	.iter_close = nvmkv_kvit_close,
 	.iter_pos_deserialize = NULL,
 	.iter_pos_serialize = NULL,
 	.xcopy = NULL

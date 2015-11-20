@@ -7,11 +7,18 @@
 #include "fcntl.h"
 #include "unistd.h"
 #include "stdbool.h"
+#include "stdlib.h"
 
 #include "kvf.h"
 #include "nvm/nvm_kv.h"
+#include "nvm/nvm_error.h"
 
-#define MAX_DEV_NAME_SIZE 256
+#define NVMKV_KVF_SECTOR_SIZE 512
+
+#define NVMKV_KVF_MAX_DEV_NAME_LEN 128
+#define NVMKV_KVF_MAX_POOL_NAME_LEN 15
+#define NVMKV_KVF_MAX_KEY_LEN 128
+#define NVMKV_KVF_MAX_VAL_LEN (4*NVMKV_KVF_SECTOR_SIZE)
 
 extern pool_operations_t nvmkv_pool_ops;
 extern kvf_operations_t nvmkv_kvlib_ops;

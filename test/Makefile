@@ -7,7 +7,8 @@
 #If you have not yet run "make install", change it to your own path
 #Otherwise, just justify PATH_TO_ANANAS_INC and PATH_TO_ANANAS_LIB
 
-PATH_TO_ANANAS= /path/to/ananas
+#PATH_TO_ANANAS= /path/to/ananas
+PATH_TO_ANANAS= /home/xiaoyang/Documents/ananas-nvmkv/test-ananas
 
 PATH_TO_ANANAS_INC= $(PATH_TO_ANANAS)/include/kvf
 PATH_TO_ANANAS_LIB= $(PATH_TO_ANANAS)/lib/.libs
@@ -22,7 +23,7 @@ LDLIBS= -lkvf -lnvmkv -lvsl -lnvm-primitives -ldl -lpthread
 CPPFLAGS=-std=gnu99
 
 all: test
-	sudo LD_LIBRARY_PATH=$(PATH_TO_ANANAS_LIB):$(PATH_TO_NVMKV_LIB) ./test
+	LD_LIBRARY_PATH=$(PATH_TO_ANANAS_LIB):$(PATH_TO_NVMKV_LIB) ./test
 
 test: test.o kvf-test.o
 	$(CC) -o $@ $^ $(LDLIBS) $(LDFLAGS)
