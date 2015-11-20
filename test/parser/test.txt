@@ -1,0 +1,6 @@
+#hwhah
+dev = "/dev/fioa"#asodfiujap
+#hwojap
+#hoaow
+csize=4096#apfijpowei
+#pasfo
