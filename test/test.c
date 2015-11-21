@@ -46,9 +46,9 @@ int smoke_test_0(){
 	kv_props_t*	props = malloc(sizeof(kv_props_t));
 
 	string_t*	key_fst = gen_str("key_1st", NVMKV_KVF_MAX_KEY_LEN);
-        string_t*       val_fst = gen_str("val_1nd", NVMKV_KVF_MAX_VAL_LEN);
-        string_t*       key_sec = gen_str("key_2nd", NVMKV_KVF_MAX_KEY_LEN);
-        string_t*       val_sec = gen_str("val_2nd", NVMKV_KVF_MAX_VAL_LEN);
+	string_t*	val_fst = gen_str("val_1nd", NVMKV_KVF_MAX_VAL_LEN);
+	string_t*	key_sec = gen_str("key_2nd", NVMKV_KVF_MAX_KEY_LEN);
+	string_t*	val_sec = gen_str("val_2nd", NVMKV_KVF_MAX_VAL_LEN);
 	string_t*	val_emp = gen_str(NULL, NVMKV_KVF_MAX_VAL_LEN);
 
 	memcpy(kvf, &nvmkv_kvlib_std, sizeof(kvf_type_t));
@@ -68,7 +68,7 @@ int smoke_test_0(){
 	del(pool, key_sec, props, NULL);
 
 
-        pool_destroy(pool);
+	pool_destroy(pool);
 
 	kvf_shutdown(kvf);
 	kvf_unregister(kvf);
@@ -111,8 +111,8 @@ int smoke_test_1(){
 
 	string_t*	key_fst = gen_str("key_1st", NVMKV_KVF_MAX_KEY_LEN);
 	string_t*	val_fst = gen_str("val_1st", NVMKV_KVF_MAX_VAL_LEN);
-        string_t*       key_sec = gen_str("key_2nd", NVMKV_KVF_MAX_KEY_LEN);
-        string_t*       val_sec = gen_str("val_2nd", NVMKV_KVF_MAX_VAL_LEN);
+	string_t*	key_sec = gen_str("key_2nd", NVMKV_KVF_MAX_KEY_LEN);
+	string_t*	val_sec = gen_str("val_2nd", NVMKV_KVF_MAX_VAL_LEN);
 	string_t*	val_emp = gen_str(NULL, NVMKV_KVF_MAX_VAL_LEN);
 
 	memcpy(kvf, &nvmkv_kvlib_std, sizeof(kvf_type_t));
@@ -142,10 +142,10 @@ int smoke_test_1(){
 	kvf_get_stats(kvf, kvf_stats);
 	print_kvf_stats(kvf_stats);
 	pool_create(kvf, pool_name, "", pool_sec);
-        get(pool_sec, key_fst, val_emp, props, NULL);
-        get(pool_sec, key_sec, val_emp, props, NULL);
-        del(pool_sec, key_fst, props, NULL);
-        del(pool_sec, key_sec, props, NULL);
+	get(pool_sec, key_fst, val_emp, props, NULL);
+	get(pool_sec, key_sec, val_emp, props, NULL);
+	del(pool_sec, key_fst, props, NULL);
+	del(pool_sec, key_sec, props, NULL);
 	pool_destroy(pool_sec);
 	printf("**\n");
 	kvf_shutdown(kvf);
