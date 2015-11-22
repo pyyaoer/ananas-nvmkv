@@ -7,4 +7,4 @@ typedef struct{
 	char devPath[NVMKV_KVF_MAX_DEV_NAME_LEN];
 }kvfParser;
 
-int kvf_parser(const char* file, kvfParser* kp);
+int kvfinit_parser(const char* file, kvfParser* kp);

@@ -1,6 +1,6 @@
 %{
 #include <string.h>
-#include "test.tab.h"
+#include "kvfinitconf.tab.h"
 typedef char* str;
 extern YYSTYPE yylval;
 %}

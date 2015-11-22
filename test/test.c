@@ -56,7 +56,7 @@ int smoke_test_0(){
 
 	kvf_load("");
 	kvf_register(kvf);
-	kvf_init(kvf, "parser/test.txt");
+	kvf_init(kvf, "kvfinitconf.txt");
 
 	pool_create(kvf, pool_name, "", pool);
 

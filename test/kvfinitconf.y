@@ -38,7 +38,7 @@ void yyerror(char *s) {
 	fprintf(stderr, "%s\n", s);
 }
 
-int kvf_parser(const char* file, kvfParser* kp){
+int kvfinit_parser(const char* file, kvfParser* kp){
 	if (kp == NULL){
 		return -1;
 	}

@@ -16,16 +16,18 @@ PATH_TO_NVMKV_INC=/usr/include/nvm
 PATH_TO_NVMKV_LIB=/usr/lib/nvm
 PATH_TO_VSL_LIB=/usr/lib/fio
 
+CC=gcc
+LEX=flex
+YACC=bison
+
 LDFLAGS= -I$(PATH_TO_ANANAS_INC) -I$(PATH_TO_NVMKV_INC) -L$(PATH_TO_ANANAS_LIB) -L$(PATH_TO_NVMKV_LIB) -L$(PATH_TO_VSL_LIB)
-
 LDLIBS= -lkvf -lnvmkv -lvsl -lnvm-primitives -ldl -lpthread
-
 CPPFLAGS=-std=gnu99
 
 all: test
 	LD_LIBRARY_PATH=$(PATH_TO_ANANAS_LIB):$(PATH_TO_NVMKV_LIB) ./test
 
-test: test.o kvf-test.o parser/test.tab.o parser/lex.yy.o
+test: test.o kvf-test.o kvfinitconf.tab.o kvfinitconf.yy.o
 	$(CC) -o $@ $^ $(LDLIBS) $(LDFLAGS)
 
 test.o: test.c kvf-test.h
@@ -34,5 +36,21 @@ test.o: test.c kvf-test.h
 kvf-test.o: kvf-test.c kvf-test.h
 	$(CC) -c $< $(LDFLAGS)
 
-clean:
+kvfinitconf.yy.o: kvfinitconf.tab.h
+
+kvfinitconf.tab.o: kvfinitconf.tab.h kvf-parser.h
+
+kvfinitconf.tab.c kvfinitconf.tab.h: kvfinitconf.y
+	$(YACC) -d kvfinitconf.y
+
+kvfinitconf.yy.c: kvfinitconf.l
+	$(LEX) kvfinitconf.l
+	mv lex.yy.c kvfinitconf.yy.c
+
+.PHONY: clean cleanrc
+
+cleanrc:
+	rm -f kvfinitconf.tab.* kvfinitconf.yy.*
+
+clean: cleanrc
 	rm -f *.o test
