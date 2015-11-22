@@ -56,7 +56,7 @@ int smoke_test_0(){
 
 	kvf_load("");
 	kvf_register(kvf);
-	kvf_init(kvf, "");
+	kvf_init(kvf, "parser/test.txt");
 
 	pool_create(kvf, pool_name, "", pool);
 
@@ -249,8 +249,8 @@ smoke_test_2_exit:
 }
 
 int main(void){
-	//smoke_test_0();
+	smoke_test_0();
 	//smoke_test_1();
-	smoke_test_2();
+	//smoke_test_2();
 	return 0;
 }

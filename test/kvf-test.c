@@ -56,21 +56,28 @@ s32 nvmkv_pool_close(pool_t* pool){
 }
 
 s32 nvmkv_kvlib_init(kvf_type_t* kvf, const char* config_file){
-	int	fd = -1;
-	int	kvfid = -1;
-	int	cache_size = 4096;
-	char	device_name[NVMKV_KVF_MAX_DEV_NAME_LEN];
+	int		fd = -1;
+	int		kvfid = -1;
+	kvfParser	kparser;
 
-	strncpy(device_name, "/dev/fioa", NVMKV_KVF_MAX_DEV_NAME_LEN);
-	fd = open(device_name, O_RDWR);
+	memset(&kparser, 0, sizeof(kvfParser));
+	kvf_parser(config_file, &kparser);
+
+	if (kparser.poolNum <= 0 || kparser.poolNum > NVM_KV_MAX_POOLS){
+		kparser.poolNum = NVM_KV_MAX_POOLS;
+	}
+	if (strlen(kparser.devPath) == 0){
+		strncpy(kparser.devPath, "/dev/fioa", NVMKV_KVF_MAX_DEV_NAME_LEN);
+	}
+	fd = open(kparser.devPath, O_RDWR);
 	if (fd < 0){
-		printf("Cannot open file %s, errno: %d\n", device_name, errno);
+		printf("Cannot open file %s, errno: %d\n", kparser.devPath, errno);
 		return -1;
 	}
 	printf("Device fd = %d\n", fd);
 	kvf->devfd = fd;
 
-	kvfid = nvm_kv_open(fd, 0, NVM_KV_MAX_POOLS, KV_GLOBAL_EXPIRY, cache_size);
+	kvfid = nvm_kv_open(fd, 0, kparser.poolNum, KV_GLOBAL_EXPIRY, kparser.cacheSize);
 	if (kvfid < 0){
 		printf("nvm_kv_open failed, errno: %d\n", errno);
 		close(fd);

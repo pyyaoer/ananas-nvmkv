@@ -10,12 +10,16 @@
 #include "stdlib.h"
 
 #include "kvf.h"
+#include "kvf-parser.h"
 #include "nvm/nvm_kv.h"
 #include "nvm/nvm_error.h"
 
 #define NVMKV_KVF_SECTOR_SIZE 512
 
+#ifndef NVMKV_KVF_MAX_DEV_NAME_LEN
 #define NVMKV_KVF_MAX_DEV_NAME_LEN 128
+#endif
+
 #define NVMKV_KVF_MAX_POOL_NAME_LEN 15
 #define NVMKV_KVF_MAX_KEY_LEN 128
 #define NVMKV_KVF_MAX_VAL_LEN (4*NVMKV_KVF_SECTOR_SIZE)
