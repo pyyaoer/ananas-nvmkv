@@ -58,9 +58,9 @@ s32 nvmkv_pool_close(pool_t* pool){
 s32 nvmkv_kvlib_init(kvf_type_t* kvf, const char* config_file){
 	int		fd = -1;
 	int		kvfid = -1;
-	kvfParser	kparser;
+	kvfInitParser	kparser;
 
-	memset(&kparser, 0, sizeof(kvfParser));
+	memset(&kparser, 0, sizeof(kvfInitParser));
 	kvfinit_parser(config_file, &kparser);
 
 	if (kparser.poolNum <= 0 || kparser.poolNum > NVM_KV_MAX_POOLS){

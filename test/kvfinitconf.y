@@ -7,7 +7,7 @@ int yylex(void);
 void yyerror(char *);
 extern FILE* yyin;
 typedef char* str;
-kvfParser yyKVF;
+kvfInitParser yyKVF;
 
 #define YYSTYPE str
 %}
@@ -38,7 +38,7 @@ void yyerror(char *s) {
 	fprintf(stderr, "%s\n", s);
 }
 
-int kvfinit_parser(const char* file, kvfParser* kp){
+int kvfinit_parser(const char* file, kvfInitParser* kp){
 	if (kp == NULL){
 		return -1;
 	}
@@ -47,7 +47,7 @@ int kvfinit_parser(const char* file, kvfParser* kp){
 		return -1;
 	}
 	yyparse();
-	memcpy(kp, &yyKVF, sizeof(kvfParser));
+	memcpy(kp, &yyKVF, sizeof(kvfInitParser));
 	fclose(yyin);
 	return 0;
 }
