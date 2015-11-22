@@ -25,7 +25,7 @@ CPPFLAGS=-std=gnu99
 all: test
 	LD_LIBRARY_PATH=$(PATH_TO_ANANAS_LIB):$(PATH_TO_NVMKV_LIB) ./test
 
-test: test.o kvf-test.o
+test: test.o kvf-test.o parser/test.tab.o parser/lex.yy.o
 	$(CC) -o $@ $^ $(LDLIBS) $(LDFLAGS)
 
 test.o: test.c kvf-test.h
