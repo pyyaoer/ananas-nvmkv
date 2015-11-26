@@ -213,7 +213,7 @@ s32 nvmkv_kvit_next(pool_t* pool, struct kv_iter* it, kv_array_t* kvarray){
 		// set value info
 		kv_value = &(kvarray->kv_elements[i].kv_value);
 		kv_value->len = NVMKV_KVF_MAX_VAL_LEN;
-		kv_value->data = malloc(NVMKV_KVF_MAX_VAL_LEN);
+		posix_memalign((void**) &(kv_value->data), NVMKV_KVF_SECTOR_SIZE, NVMKV_KVF_MAX_VAL_LEN);
 
 		// get the current kv
 		ret = nvm_kv_get_current(kvf->kvfid, it->id, (nvm_kv_key_t *)kv_key->data, &kv_key->len, kv_value->data, kv_value->len, &key_info);

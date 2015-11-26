@@ -9,7 +9,7 @@ string_t* gen_str(char* c_str, int len){
 		return NULL;
 	string_t* s_str = malloc(sizeof(string_t));
 	s_str->len = len;
-	s_str->data = malloc(len);
+	posix_memalign((void**) &(s_str->data), NVMKV_KVF_SECTOR_SIZE, NVMKV_KVF_MAX_VAL_LEN);
 	memset(s_str->data, 0, len);
 	if (c_str != NULL){
 		int c_len = strlen(c_str);
@@ -127,7 +127,7 @@ int smoke_test_1(){
 
 
 	printf("\n\n");
-	kvf_init(kvf, "");
+	kvf_init(kvf, "kvfinitconf.txt");
 	kvf_get_stats(kvf, kvf_stats);
 	print_kvf_stats(kvf_stats);
 	pool_create(kvf, pool_name, "", pool_fst);
@@ -138,7 +138,7 @@ int smoke_test_1(){
 
 
 	printf("\n\n");
-	kvf_init(kvf, "");
+	kvf_init(kvf, "kvfinitconf.txt");
 	kvf_get_stats(kvf, kvf_stats);
 	print_kvf_stats(kvf_stats);
 	pool_create(kvf, pool_name, "", pool_sec);
@@ -201,9 +201,9 @@ int smoke_test_2(){
 	printf("\n\nSmoking test 2:\n");
 	kvf_load("");
 	kvf_register(kvf);
-	kvf_init(kvf, "");
+	kvf_init(kvf, "kvfinitconf.txt");
 
-	pool_create(kvf, "iter_pool", "", pool);
+	pool_create(kvf, "st_2_pool", "", pool);
 
 	put(pool, key_fst, val_fst, props, NULL);
 	put(pool, key_sec, val_sec, props, NULL);
