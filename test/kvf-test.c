@@ -1,5 +1,7 @@
 #include "kvf-test.h"
 
+string_t* buf = NULL;
+
 s32 nvmkv_pool_create(const char* name, const char* config_path, pool_t* pool){
 
 	int		pool_id = -1;
@@ -60,6 +62,10 @@ s32 nvmkv_kvlib_init(kvf_type_t* kvf, const char* config_file){
 	int		kvfid = -1;
 	kvfInitParser	kparser;
 
+	if (buf == NULL){
+		buf = malloc(sizeof(string_t));
+		posix_memalign((void**) &(buf->data), NVMKV_KVF_SECTOR_SIZE, NVMKV_KVF_MAX_VAL_LEN);
+	}
 	memset(&kparser, 0, sizeof(kvfInitParser));
 	kvfinit_parser(config_file, &kparser);
 
@@ -94,6 +100,12 @@ s32 nvmkv_kvlib_shutdown(kvf_type_t* kvf){
 	int	kvfid = kvf->kvfid;
 	int	ret = -1;
 
+	if (buf != NULL){
+		free(buf->data);
+		free(buf);
+		buf = NULL;
+	}
+
 	ret = nvm_kv_close(kvfid);
 	if (ret < 0){
 		printf("nvm_kv_close: failed, errno = %d\n", errno);
@@ -126,10 +138,16 @@ s32 nvmkv_kvlib_getstats(kvf_type_t* kvf, kvf_stats_t* kvfstats){
 }
 
 s32 nvmkv_kv_put(pool_t* pool, const string_t* key, const string_t* value, const kv_props_t* props, const put_options_t* putopts){
-	int	ret = -1;
-	kvf_type_t* kvf = pool->kvf;
+	int		ret = -1;
+	kvf_type_t*	kvf = pool->kvf;
+	string_t*	aligned_val = value;
 
-	ret = nvm_kv_put(kvf->kvfid, pool->pool_id, (nvm_kv_key_t *) key->data, key->len, value->data, value->len, 0, true, 0);
+	if ((uint64_t)(value->data) & (NVMKV_KVF_SECTOR_SIZE - 1)){
+		buf->len = value->len;
+		strncpy(buf->data, value->data, value->len);
+		aligned_val = buf;
+	}
+	ret = nvm_kv_put(kvf->kvfid, pool->pool_id, (nvm_kv_key_t *) key->data, key->len, aligned_val->data, aligned_val->len, 0, true, 0);
 	if (ret < 0){
 		printf("nvm_kv_put: failed, errno = %d\n", errno);
 		return -1;
@@ -141,6 +159,12 @@ s32 nvmkv_kv_get(pool_t* pool, const string_t* key, string_t* value, const kv_pr
 	int	 		ret = -1;
 	kvf_type_t* 		kvf = pool->kvf;
 	nvm_kv_key_info_t	key_info;
+
+	if (value->len & (NVMKV_KVF_SECTOR_SIZE - 1)){
+		value->len = (value->len / NVMKV_KVF_SECTOR_SIZE + 1) * NVMKV_KVF_SECTOR_SIZE;
+		free(value->data);
+		value->data = malloc(value->len);
+	}
 
 	ret = nvm_kv_get(kvf->kvfid, pool->pool_id, (nvm_kv_key_t *) key->data, key->len, value->data, value->len, true, &key_info);
 	if (ret < 0){
